@@ -1,0 +1,32 @@
+build:
+  image: drone/golang
+  environment:
+    - CGO_ENABLED=0
+    - GOPATH=/drone
+  commands:
+    - go get
+    - go build
+    - go test
+
+publish:
+  docker:
+    username: $$DOCKER_USER
+    password: $$DOCKER_PASS
+    email: $$DOCKER_EMAIL
+    repo: plugins/drone-marathon
+    when:
+      branch: master
+
+notify:
+  slack:
+    webhook_url: $$SLACK_URL
+    channel: #dev
+    username: drone
+
+plugin:
+  name: Marathon
+  desc: Publishes app to marathon 
+  type: deploy
+  image: plugins/drone-marathon
+  labels:
+    - infrastructure
